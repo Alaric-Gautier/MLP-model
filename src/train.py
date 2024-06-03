@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from data_loader import PneumoniaDataset
 from model import MLP
 
+
 def train_model(model, train_loader, criterion, optimizer, num_epochs):
     model.train()
     for epoch in range(num_epochs):
@@ -16,7 +17,9 @@ def train_model(model, train_loader, criterion, optimizer, num_epochs):
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
-        print(f"Epoch {epoch+1}/{num_epochs}, Loss: {running_loss/len(train_loader)}")
+        print(
+            f"Epoch {epoch+1}/{num_epochs}, Loss: {running_loss/len(train_loader)}")
+
 
 if __name__ == "__main__":
     DATA_PATH_TRAIN = '../resources/data/train'
@@ -25,7 +28,8 @@ if __name__ == "__main__":
     NUM_EPOCHS = 20
 
     train_dataset = PneumoniaDataset(DATA_PATH_TRAIN, CLASS_NAME)
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+    train_loader = DataLoader(
+        train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
     input_size = train_dataset[0][0].shape[0]
     hidden_size = 512
@@ -37,4 +41,4 @@ if __name__ == "__main__":
 
     train_model(model, train_loader, criterion, optimizer, NUM_EPOCHS)
 
-    torch.save(model.state_dict(), 'pneumonia_mlp_model.pth')
+    model.save('pneumonia_mlp_model.pth')

@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from data_loader import PneumoniaDataset
 from model import MLP
 
+
 def evaluate_model(model, test_loader):
     model.eval()
     all_preds = []
@@ -17,6 +18,7 @@ def evaluate_model(model, test_loader):
             all_preds.extend(preds.numpy())
             all_labels.extend(labels.numpy())
     return all_labels, all_preds
+
 
 if __name__ == "__main__":
     DATA_PATH_TEST = '../resources/data/test'
@@ -30,7 +32,7 @@ if __name__ == "__main__":
     num_classes = len(CLASS_NAME)
 
     model = MLP(input_size, hidden_size, num_classes)
-    model.load_state_dict(torch.load('pneumonia_mlp_model.pth'))
+    model.load('pneumonia_mlp_model.pth')
 
     labels, preds = evaluate_model(model, test_loader)
 
@@ -40,7 +42,8 @@ if __name__ == "__main__":
     # Afficher la matrice de confusion
     conf_matrix = confusion_matrix(labels, preds)
     plt.figure(figsize=(10, 7))
-    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=CLASS_NAME, yticklabels=CLASS_NAME)
+    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues',
+                xticklabels=CLASS_NAME, yticklabels=CLASS_NAME)
     plt.xlabel('Predicted')
     plt.ylabel('Actual')
     plt.title('Confusion Matrix')
