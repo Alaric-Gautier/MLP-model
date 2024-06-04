@@ -31,14 +31,18 @@ if __name__ == "__main__":
     train_loader = DataLoader(
         train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
-    input_size = train_dataset[0][0].shape[0]
-    hidden_size = 512
+    sample_img, _ = train_dataset[0]
+    # Devrait être torch.Size([8100])
+    print(f"Sample image shape: {sample_img.shape}")
+    input_size = sample_img.shape[0]
+
+    hidden_units = (128, 64, 32)
     num_classes = len(CLASS_NAME)
 
-    model = MLP(input_size, hidden_size, num_classes)
+    model = MLP(input_size, hidden_units, num_classes)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     train_model(model, train_loader, criterion, optimizer, NUM_EPOCHS)
 
-    model.save('pneumonia_mlp_model.pth')
+    torch.save(model.state_dict(), 'pneumonia_mlp_model.pth')
