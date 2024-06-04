@@ -6,6 +6,7 @@ from torchmetrics import Accuracy
 
 class MLP(pl.LightningModule):
     def __init__(self, input_size=8100, hidden_units=(128, 64, 32), num_classes=2):
+
         super().__init__()
 
         self.train_acc = Accuracy(task='multiclass', num_classes=num_classes)

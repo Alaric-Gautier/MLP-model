@@ -4,6 +4,8 @@ import numpy as np
 from skimage.feature import hog
 import torch
 from torch.utils.data import Dataset
+from torchvision import transforms
+from PIL import Image
 
 
 class PneumoniaDataset(Dataset):
@@ -12,6 +14,12 @@ class PneumoniaDataset(Dataset):
         self.categories = categories
         self.img_size = img_size
         self.data = []
+        self.transform = transforms.Compose([
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomRotation(20),
+            transforms.RandomResizedCrop(self.img_size),
+            # Ajoutez d'autres transformations si nécessaire
+        ])
         self.load_data()
 
     def extract_hog_features(self, image):
@@ -33,8 +41,11 @@ class PneumoniaDataset(Dataset):
                         if img_array is None:
                             print(f"Warning: Could not read image {img_path}")
                             continue
+                        img_array = cv2.resize(img_array, self.img_size)
+                        img_array = Image.fromarray(img_array)
+                        img_array = self.transform(img_array)
                         features = self.extract_hog_features(
-                            cv2.resize(img_array, self.img_size))
+                            np.array(img_array))
                         self.data.append((features, class_num))
                 except Exception as e:
                     print(f"Error processing image {img}: {e}")

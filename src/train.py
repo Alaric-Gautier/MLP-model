@@ -5,6 +5,10 @@ from torch.utils.data import DataLoader
 from data_loader import PneumoniaDataset
 from model import MLP
 
+# Déterminer si CUDA est disponible
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(f"Using device: {device}")
+
 
 def train_model(model, train_loader, criterion, optimizer, num_epochs):
     model.train()
@@ -40,6 +44,8 @@ if __name__ == "__main__":
     num_classes = len(CLASS_NAME)
 
     model = MLP(input_size, hidden_units, num_classes)
+    # Déplacer le modèle sur le GPU si disponible
+    model.to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
