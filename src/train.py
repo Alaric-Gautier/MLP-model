@@ -3,7 +3,9 @@ import torch
 import torch.optim as optim
 import torch.nn as nn
 from torch.utils.data import DataLoader, random_split
+import seaborn as sns
 import matplotlib.pyplot as plt
+import pandas as pd
 from data_loader import PneumoniaDataset
 from model import MLP
 
@@ -58,14 +60,17 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
             print("Early stopping")
             break
 
-    # Tracer les courbes d'apprentissage
+    # Tracer les courbes d'apprentissage avec seaborn
+    data = pd.DataFrame({
+        'Epochs': range(1, len(train_losses) + 1),
+        'Train Loss': train_losses,
+        'Validation Loss': val_losses
+    })
+    data_melted = data.melt(
+        id_vars='Epochs', var_name='Type', value_name='Loss')
     plt.figure(figsize=(10, 5))
-    plt.plot(train_losses, label='Train Loss')
-    plt.plot(val_losses, label='Validation Loss')
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss')
+    sns.lineplot(x='Epochs', y='Loss', hue='Type', data=data_melted)
     plt.title('Learning Curves')
-    plt.legend()
     plt.show()
 
     return train_losses, val_losses
